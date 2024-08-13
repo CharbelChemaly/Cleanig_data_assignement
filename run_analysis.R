@@ -51,7 +51,7 @@ training_raw_results <- read_table("train/X_train.txt",
 colnames(training_raw_results) <- list_name$X2
 
 train_mean_std <- select(training_raw_results, contains("mean()"), 
-                         contains("std()"))
+                         contains("std"))
 
 ##Merging the results, the IDs and the activity
 final_train_data <- cbind(subject_train, activity_train, train_mean_std)
@@ -59,9 +59,21 @@ final_train_data <- cbind(subject_train, activity_train, train_mean_std)
 ##Merge the two data frames
 merged_data <- rbind(final_test_data, final_train_data)
 
+##Giving proper names to the columns
+names(merged_data)<-gsub("Acc", "Accelerometer", names(merged_data))
+names(merged_data)<-gsub("Gyro", "Gyroscope", names(merged_data))
+names(merged_data)<-gsub("BodyBody", "Body", names(merged_data))
+names(merged_data)<-gsub("Mag", "Magnitude", names(merged_data))
+names(merged_data)<-gsub("^t", "Time", names(merged_data))
+names(merged_data)<-gsub("^f", "Frequency", names(merged_data))
+names(merged_data)<-gsub("tBody", "TimeBody", names(merged_data))
+names(merged_data)<-gsub("-mean()", "Mean", names(merged_data), ignore.case = TRUE)
+names(merged_data)<-gsub("-std()", "STD", names(merged_data), ignore.case = TRUE)
+names(merged_data)<-gsub("-freq()", "Frequency", names(merged_data), ignore.case = TRUE)
+names(merged_data)<-gsub("angle", "Angle", names(merged_data))
+names(merged_data)<-gsub("gravity", "Gravity", names(merged_data)) 
 
 ##Giving names to the activities
-
 merged_data <- merged_data %>%
   mutate(activity = recode(activity,
                            `1` = "Walking",
